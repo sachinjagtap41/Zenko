@@ -7,7 +7,7 @@ zenko-zookeeper:
   servers: 1
   resources:
     requests:
-      cpu: 500m
+      cpu: 100m
       memory: 256Mi
   heap: "256M"
 

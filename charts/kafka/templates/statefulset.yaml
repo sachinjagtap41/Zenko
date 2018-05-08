@@ -26,8 +26,6 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-           # - name: KAFKA_ADVERTISED_PORT
-           #   value: kafka
             - name: KAFKA_ADVERTISED_LISTENERS
               value: "PLAINTEXT://{{ template "kafka.fullname" . }}-0.{{ template "kafka.fullname" . }}:9092"
             - name: KAFKA_CREATE_TOPICS
@@ -38,6 +36,8 @@ spec:
               value: "-Xmx512M"
             - name: KAFKA_LOG_DIRS
               value: "/kafka/kafka-logs"
+            - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: {{ .Values.replicas | quote }}
           ports:
             - containerPort: 9092
               name: kafka

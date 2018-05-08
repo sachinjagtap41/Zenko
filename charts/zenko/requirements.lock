@@ -16,12 +16,12 @@ dependencies:
   version: 0.1.0
 - name: kafka
   repository: file://../kafka
-  version: 0.1.1
+  version: 0.1.2
 - name: s3-data
   repository: file://../s3-data
   version: 0.1.0
 - name: cloudserver-front
   repository: file://../cloudserver-front
   version: 0.1.4
-digest: sha256:cf5fa335902dd3b827ed3fd6921d3415a81537d0ea3ca0b92b131078528f45e4
-generated: 2018-05-02T23:18:38.627300269+02:00
+digest: sha256:f0cae49d443f9b71db368a42be1e9fe21316171dc14240992cd0e89c0f869602
+generated: 2018-05-07T16:16:41.979833-07:00
