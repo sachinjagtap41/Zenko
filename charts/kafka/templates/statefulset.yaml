@@ -22,48 +22,34 @@ spec:
     spec:
       terminationGracePeriodSeconds: 10
       initContainers:
-        - name: init-topic
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: IfNotPresent
-          command:
-          - "/usr/bin/kafka-topics"
-          args:
-          - "--create"
-          - "--zookeeper {{ .Release.name }}-zenko-zookeeper:2181"
-          - "--replication-factor {{ .Values.replicas }}"
-          - "--partitions {{ .Values.partitions }}"
-          - "--topic backbeat-replication"
-      initContainers:
-        - name: init-topic
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: IfNotPresent
-          command:
-          - "/usr/bin/kafka-topics"
-          args:
-          - "--create"
-          - "--zookeeper {{ .Release.name }}-zenko-zookeeper:2181"
-          - "--replication-factor {{ .Values.replicas }}"
-          - "--partitions {{ .Values.partitions }}"
-          - "--topic backbeat-replication-status"
-      initContainers:
-        - name: init-topic
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: IfNotPresent
-          command:
-          - "/usr/bin/kafka-topics"
-          args:
-          - "--create"
-          - "--zookeeper {{ .Release.name }}-zenko-zookeeper:2181"
-          - "--replication-factor {{ .Values.replicas }}"
-          - "--partitions {{ .Values.partitions }}"
-          - "--topic  backbeat-metrics"
+#     initContainers:
+#        - name: init-backbeat
+#          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+#          imagePullPolicy: IfNotPresent
+#          command:
+#          - "bash"
+#          args:
+#          - "-c"
+#          - |
+#            set -ex
+#            IFS="," read -ra BACKBEAT_TOPICS <<< "{{ .Values.topics }}"
+#            for topic in "${BACKBEAT_TOPICS[@]}"; do
+#            /usr/bin/kafka-topics --create \
+#            --zookeeper {{ .Release.name }}-zenko-zookeeper:2181 \
+#            --replication-factor {{ .Values.replicas }} \
+#            --partitions {{ .Values.partitions }} \
+#            --topic $topic || exit 1
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+            - name: KAFKA_BROKER_ID
+              value: "${HOSTNAME##*-}"
             - name: KAFKA_ADVERTISED_LISTENERS
               value: "PLAINTEXT://{{ template "kafka.fullname" . }}-0.{{ template "kafka.fullname" . }}:9092"
+            - name: KAFKA_PORT
+              value: 9092
             - name: KAFKA_ZOOKEEPER_CONNECT
               value: "{{- printf "%s-zenko-zookeeper:2181" .Release.Name | trunc 63 | trimSuffix "-" -}}"
             - name: KAFKA_HEAP_OPTS
@@ -86,7 +72,20 @@ spec:
           #  httpGet:
           #    path: /
           #    port: {{ .Values.service.internalPort }}
-          #readinessProbe:
+          readinessProbe:
+            exec:
+              command:
+               - "bash -c"
+               - |
+                 set -ex
+                 IFS="," read -ra BACKBEAT_TOPICS <<< "{{ .Values.topics }}"
+                 for topic in "${BACKBEAT_TOPICS[@]}"; do
+                 /usr/bin/kafka-topics --create \
+                 --zookeeper {{ .Release.name }}-zenko-zookeeper:2181 \
+                 --replication-factor {{ .Values.replicas }} \
+                 --partitions {{ .Values.partitions }} \
+                 --topic $topic || exit 1
+
           #  httpGet:
           #    path: /
           #    port: {{ .Values.service.internalPort }}

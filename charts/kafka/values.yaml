@@ -8,6 +8,11 @@ image:
 service:
   name: kafka
 replicas: 1
+partitions: 1
+topics: 
+  - backbeat-replication
+  - backbeat-replication-status
+  - backbeat-metrics
 persistentVolume:
   accessModes:
     - ReadWriteOnce
