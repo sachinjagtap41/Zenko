@@ -12,7 +12,7 @@ zenko-zookeeper:
   heap: "256M"
 
 kafka:
-  replicas: 1
+  replicas: 2
 
 mongodb-replicaset:
   replicaSet: rs0

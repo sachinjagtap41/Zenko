@@ -21,6 +21,42 @@ spec:
         release: {{ .Release.Name }}
     spec:
       terminationGracePeriodSeconds: 10
+      initContainers:
+        - name: init-topic
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          command:
+          - "/usr/bin/kafka-topics"
+          args:
+          - "--create"
+          - "--zookeeper {{ .Release.name }}-zenko-zookeeper:2181"
+          - "--replication-factor {{ .Values.replicas }}"
+          - "--partitions {{ .Values.partitions }}"
+          - "--topic backbeat-replication"
+      initContainers:
+        - name: init-topic
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          command:
+          - "/usr/bin/kafka-topics"
+          args:
+          - "--create"
+          - "--zookeeper {{ .Release.name }}-zenko-zookeeper:2181"
+          - "--replication-factor {{ .Values.replicas }}"
+          - "--partitions {{ .Values.partitions }}"
+          - "--topic backbeat-replication-status"
+      initContainers:
+        - name: init-topic
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          command:
+          - "/usr/bin/kafka-topics"
+          args:
+          - "--create"
+          - "--zookeeper {{ .Release.name }}-zenko-zookeeper:2181"
+          - "--replication-factor {{ .Values.replicas }}"
+          - "--partitions {{ .Values.partitions }}"
+          - "--topic  backbeat-metrics"
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -28,8 +64,6 @@ spec:
           env:
             - name: KAFKA_ADVERTISED_LISTENERS
               value: "PLAINTEXT://{{ template "kafka.fullname" . }}-0.{{ template "kafka.fullname" . }}:9092"
-            - name: KAFKA_CREATE_TOPICS
-              value: "backbeat:1:1"
             - name: KAFKA_ZOOKEEPER_CONNECT
               value: "{{- printf "%s-zenko-zookeeper:2181" .Release.Name | trunc 63 | trimSuffix "-" -}}"
             - name: KAFKA_HEAP_OPTS
