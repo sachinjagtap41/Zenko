@@ -12,6 +12,7 @@ spec:
     matchLabels:
       app: {{ template "kafka.name" . }}
       release: {{ .Release.Name }}
+  podManagementPolicy: OrderedReady
   serviceName: {{ template "kafka.fullname" . }}
   replicas: {{ .Values.replicas }}
   template:
