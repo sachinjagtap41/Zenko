@@ -10,6 +10,7 @@ _log = logging.getLogger('test')
 
 @pytest.mark.skip(reason ='Not implemented in CI')
 def test_serverside_encryption(encrypted_bucket, aws_target_bucket, testfile):
+    util.mark_test('ZENKO SERVER SIDE ENCRYPTION!')
     _log.info('Using endpoint %s'%conf.ZENKO_AWS_ENDPOINT)
     encrypted_bucket.put_object(
         Key = 'enc-test',

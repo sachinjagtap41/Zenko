@@ -225,8 +225,9 @@ def muti_crr_bucket(zenko_resource):
 @pytest.fixture(scope = 'function')
 def encrypted_bucket(aws_endpoint_resource, s3auth):
 	name = util.gen_bucket_name()
-	ep = '%s/%s/'%(conf.ZENKO_ENDPOINT, name)
-	resp = requests.put(ep, auth=s3auth, verify = conf.VERIFY_CERTIFICATES)
+	ep = '%s/%s'%(conf.ZENKO_AWS_ENDPOINT, name)
+	headers = {'x-amz-scal-server-side-encryption!': 'AES256'}
+	resp = requests.put(ep, auth=s3auth, headers = headers, verify = conf.VERIFY_CERTIFICATES)
 	bucket = create_bucket(aws_endpoint_resource, name)
 	yield bucket
 	util.cleanup_bucket(bucket)
