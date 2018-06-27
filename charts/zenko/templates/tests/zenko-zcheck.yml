@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ .Release.Name }}-zenko-zcheck"
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+  - name: {{ .Release.Name }}-zenko-zcheck
+    imagePullPolicy: "Always"
+    image: "docker.io/zenko/zcheck"
+    command: ["zcheck", "--helm-release", "{{ .Release.Name }}", "checkup"]
+  restartPolicy: Never
