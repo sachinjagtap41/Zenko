@@ -78,6 +78,7 @@ def check_object(key, data, local, *args, timeout=0, backoff=5):
             passed = False
     return passed
 
+
 def check_object_dne(key, data, local, *args, timeout=0, backoff=5):
     ref_hash = hashobj(data)
     local_hash = get_object_hash(local, key, timeout, backoff)
@@ -100,6 +101,7 @@ def check_object_dne(key, data, local, *args, timeout=0, backoff=5):
             _log.error('%s/%s should not exist on cloud backend',
                        bucket.name, remotekey)
         return passed
+
 
 def cleanup_bucket(bucket, replicated=False, delete_bucket=True): # noqa pylint: disable=too-many-locals
     if replicated:
