@@ -95,10 +95,11 @@ def check_object_dne(key, data, local, *args, timeout=0, backoff=5):
         remotekey = '%s/%s' % (local.name,
                 key) if not conf.BUCKET_MATCH and local is not bucket else key  # noqa pylint: disable=bad-continuation
         remote_hash = get_object_hash(bucket, remotekey, timeout, backoff)
-        if remote_hash is None:
-            return passed
-        _log.error('%s/%s should not exist on cloud backend',
-                   bucket.name, remotekey)
+        if remote_hash is not None:
+            passed = False
+            _log.error('%s/%s should not exist on cloud backend',
+                       bucket.name, remotekey)
+        return passed
 
 def cleanup_bucket(bucket, replicated=False, delete_bucket=True): # noqa pylint: disable=too-many-locals
     if replicated:
