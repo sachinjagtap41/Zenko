@@ -79,11 +79,12 @@ def check_object(key, data, local, *args, timeout=0, backoff=5):
     return passed
 
 
-def check_object_dne(key, data, local, *args, timeout=0, backoff=5):
+def check_object_dne(key, local, *args, timeout=0, backoff=5):
     passed = False
     try:
         get_object_hash(local, key, timeout, backoff)
     except Exception as exp:
+        _log.info('exception is %s', exp)
         passed = True
     for bucket in args:
         remotekey = '%s/%s' % (local.name,
