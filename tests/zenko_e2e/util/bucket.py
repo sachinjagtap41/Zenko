@@ -78,6 +78,27 @@ def check_object(key, data, local, *args, timeout=0, backoff=5):
             passed = False
     return passed
 
+def check_object_dne(key, data, local, *args, timeout=0, backoff=5):
+    ref_hash = hashobj(data)
+    local_hash = get_object_hash(local, key, timeout, backoff)
+    if local_hash is None:
+        return True
+    if local_hash is None:
+        _log.error('Unable to retrieve %s/%s from zenko', local.name, key)
+        contents = list(local.objects.all())
+        _log.debug('%s bucket contents %s', local.name, contents)
+    if ref_hash != local_hash:
+        _log.error('Local object hash != data hash')
+        return False
+    passed = True
+    for bucket in args:
+        remotekey = '%s/%s' % (local.name,
+                key) if not conf.BUCKET_MATCH and local is not bucket else key  # noqa pylint: disable=bad-continuation
+        remote_hash = get_object_hash(bucket, remotekey, timeout, backoff)
+        if remote_hash is None:
+            return passed
+        _log.error('%s/%s should not exist on cloud backend',
+            bucket.name, remotekey)
 
 def cleanup_bucket(bucket, replicated=False, delete_bucket=True): # noqa pylint: disable=too-many-locals
     if replicated:
