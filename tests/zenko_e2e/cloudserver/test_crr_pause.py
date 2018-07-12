@@ -1,3 +1,4 @@
+import logging
 import pytest
 
 import requests
@@ -7,9 +8,13 @@ import zenko_e2e.conf as conf
 
 from ..fixtures import *
 
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s %(name)s %(levelname)s: %(message)s',
+                    datefmt='%S')
+
 
 @pytest.mark.conformance
-def test_aws_1_1(aws_crr_bucket, aws_crr_target_bucket, testfile, objkey):
+def test_aws_1_1_pr(aws_crr_bucket, aws_crr_target_bucket, testfile, objkey):
     util.mark_test('AWS 1-1 REPLICATION PAUSE RESUME TEST')
     aws_crr_bucket.put_object(
         Body=testfile,
@@ -34,7 +39,7 @@ def test_aws_1_1(aws_crr_bucket, aws_crr_target_bucket, testfile, objkey):
 
 
 @pytest.mark.conformance
-def test_gcp_1_1(gcp_crr_bucket, gcp_crr_target_bucket, testfile, objkey):
+def test_gcp_1_1_pr(gcp_crr_bucket, gcp_crr_target_bucket, testfile, objkey):
     util.mark_test('GCP 1-1 REPLICATION PAUSE RESUME TEST')
     gcp_crr_bucket.put_object(
         Body=testfile,
@@ -59,7 +64,7 @@ def test_gcp_1_1(gcp_crr_bucket, gcp_crr_target_bucket, testfile, objkey):
 
 
 @pytest.mark.conformance
-def test_azure_1_1(
+def test_azure_1_1_pr(
         azure_crr_bucket, azure_crr_target_bucket, testfile, objkey):
     util.mark_test('AZURE 1-1 REPLICATION PAUSE RESUME TEST')
     azure_crr_bucket.put_object(
@@ -85,7 +90,7 @@ def test_azure_1_1(
 
 
 @pytest.mark.conformance
-def test_wasabi_1_1(
+def test_wasabi_1_1_pr(
         wasabi_crr_bucket, wasabi_crr_target_bucket, testfile, objkey):
     util.mark_test('WASABI 1-1 REPLICATION PAUSE RESUME TEST')
     wasabi_crr_bucket.put_object(
@@ -111,7 +116,7 @@ def test_wasabi_1_1(
 
 
 @pytest.mark.conformance
-def test_multi_1_M(  # pylint: disable=invalid-name, too-many-arguments
+def test_multi_1_M_pr(  # pylint: disable=invalid-name, too-many-arguments
         multi_crr_bucket, aws_crr_target_bucket, gcp_crr_target_bucket,
         azure_crr_target_bucket, wasabi_crr_target_bucket, testfile, objkey):
     util.mark_test("MULTI 1-M REPLICATION PAUSE RESUME TEST")

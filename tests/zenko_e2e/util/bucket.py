@@ -82,8 +82,9 @@ def check_object(key, data, local, *args, timeout=0, backoff=5):
 def check_object_dne(key, local, *args, timeout=0, backoff=5):
     passed = False
     try:
+        _log.info('about to call get_object_hash in check_object_dne')
         get_object_hash(local, key, timeout, backoff)
-    except Exception as exp:
+    except Exception as exp:  # pylint: disable=broad-except
         _log.info('exception is %s', exp)
         passed = True
     for bucket in args:
