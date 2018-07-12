@@ -221,3 +221,35 @@ stages:
       - ShellCommandWithSecrets: *test_zenko
       - ShellCommand: *dump_logs
       - Upload: *upload_artifacts
+
+    cosbench-latest:
+      worker: *kube_cluster
+      steps:
+        - ShellCommand:
+            name: Clone zenko-cosbench repo
+            command: git clone git@github.com:scality/zenko-cosbench.git
+            workdir: build/eve/workers
+        - ShellCommandWithSecrets:
+            name: Generate cosbench workload
+            command: >-
+              awk -f tmpl.awk
+                -v ak="$ZENKO_ACCESS_KEY"
+                -v sk="$ZENKO_SECRET_KEY"
+                -v ep="${ZENKO_HELM_RELEASE}-cloudserver-front"
+                cosbench_workload.xml | tee zenko-cosbench/charts/zenko-cosbench/workload.xml
+            workdir: build/eve/workers
+        - ShellCommand:
+            name: Install cosbench
+            command: |-
+              helm upgrade zenko-cosbench --namespace %(prop:testNamespace)s
+              --install zenko-cosbench/charts/zenko-cosbench
+              --set controller.staticWorkload=true
+        - ShellCommand:
+            name: Start cosbench run
+            command:
+        - ShellCommand:
+            name: Retrieve run results
+            command:
+        - ShellCommand:
+            name: Upload results
+            command:

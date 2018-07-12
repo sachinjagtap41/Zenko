@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<workload name="workload1" description="Metadata (0 byte objects) sample benchmark for s3">
+    <storage type="s3" config="accesskey={{ACCESS_KEY}};  ={{SECRET_KEY}};endpoint={{ENDPOINT}};path_style_access=true" />
+    <workflow>
+        <workstage name="1Mbyte64thread">
+            <work name="1Mbyte64thread" workers="64" runtime="1200">
+                <operation type="write" ratio="100" config="cprefix=anuragmittal;containers=r(1,1);objects=u(10000000,20000000);sizes=c(0)KB;" id="write_1" />
+            </work>
+        </workstage>
+    </workflow>
+</workload>
