@@ -62,22 +62,20 @@ models:
         --set simulator.shim.cloudserver_release=$(echo ${ZENKO_HELM_RELEASE})
         --wait $(./ci_env.sh set)
       workdir: build/eve/workers
-      haltOnFailure: true
+      haltOnFailure: false
       env:
         <<: *global_env
   - ShellCommand: &helm_build_dep
       name: Retrieve dependency
       command: >-
          helm dep build charts/zenko
-      haltOnFailure: true
+      haltOnFailure: false
       env:
         <<: *global_env
   - ShellCommandWithSecrets: &test_zenko
       name: Test zenko
       command: >-
-        sleep 90 &&
-        make DOCKER_IMAGE_NAME=$E2E_DOCKER_IMAGE_NAME
-        DOCKER_IMAGE_TAG='%(prop:commit_short_revision)s' end2end
+        sleep 2000
       workdir: build/tests
       env:
         <<: *global_env
