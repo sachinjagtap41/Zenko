@@ -268,7 +268,7 @@ stages:
             name: Retrieve run results
             command: |-
               mkdir cosbench
-              kubectl cp %(prop:testNamespace)/%(prop:cosbench_pod)/:archive/%(prop:cosbench_workload_id)-workload1/ ./cosbench/
+              kubectl cp %(prop:testNamespace)\/%(prop:cosbench_pod)\/:archive\/%(prop:cosbench_workload_id)-workload1\/ ./cosbench\/
             workdir: build/tests
         - Upload:
             source: tests/cosbench
