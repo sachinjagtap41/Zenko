@@ -264,13 +264,13 @@ stages:
           name: Get cosbench pod
           property: cosbench_pod
           command: kubectl get pods | grep cosbench-controller | awk '{print $1}'
-        - ShellCommand:
-            name: Retrieve run results
-            command: |-
-              mkdir cosbench
-              kubectl cp %(prop:testNamespace)/%(prop:cosbench_pod)/:archive/%(prop:cosbench_workload_id)-workload1/ ./cosbench/
-            workdir: build/tests
-        - Upload:
-            source: tests/cosbench
-            urls:
-              - "*"
+        # - ShellCommand:
+        #     name: Retrieve run results
+        #     command: |-
+        #       mkdir cosbench
+        #       kubectl cp %(prop:testNamespace)/%(prop:cosbench_pod)/:archive/%(prop:cosbench_workload_id)-workload1/ ./cosbench/
+        #     workdir: build/tests
+        # - Upload:
+        #     source: tests/cosbench
+        #     urls:
+        #       - "*"
