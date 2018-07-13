@@ -221,46 +221,45 @@ stages:
       - ShellCommandWithSecrets: *test_zenko
       - ShellCommand: *dump_logs
       - Upload: *upload_artifacts
-
-    cosbench-latest:
-      worker: *kube_cluster
-      steps:
-        - ShellCommand:
-            name: Clone zenko-cosbench repo
-            command: git clone git@github.com:scality/zenko-cosbench.git
-            workdir: build/eve/workers
-        - ShellCommandWithSecrets:
-            name: Generate cosbench workload
-            command: >-
-              awk -f tmpl.awk
-                -v ak="$ZENKO_ACCESS_KEY"
-                -v sk="$ZENKO_SECRET_KEY"
-                -v ep="http://${ZENKO_HELM_RELEASE}-cloudserver-front"
-                cosbench_workload.xml | tee zenko-cosbench/charts/zenko-cosbench/workload.xml
-            workdir: build/eve/workers
-        - ShellCommand:
-            name: Install cosbench
-            command: >-
-              helm upgrade zenko-cosbench --namespace %(prop:testNamespace)s
-              --install zenko-cosbench/charts/zenko-cosbench
-              --set controller.staticWorkload=true
-              --wait
-        - SetPropertyFromCommand:
-            name: Start cosbench run and grab ID
-            property: cosbench_workload_id
-            command: >-
-              curl "http://cosbench-cosbench-controller:19088/controller/cli/submit.action?username=anonymous&password=cosbench"
-              -F @zenko-cosbench/charts/zenko-cosbench/workload.xml | sed 's/Accepted with ID: \(.*\)/\\1/'
-            workdir: build/eve/workers
-        - ShellCommand:
-            name: Wait for run to finish
-            timeout: 45000 # 12.5 hrs
-            command: |-
-              while [ $(curl "http://cosbench-cosbench-controller:19088/controller/cli/index.action?username=anonymous&password=cosbench 2>&1 | grep PROCESSING | wc -l | xargs -I "X" test 1 -eq X) ]; do
-                sleep 60
-              done
-            haltOnFailure: true
-        - SetPropertyFromCommand:
-          name: Get cosbench pod
-          property: cosbench_pod
-          command: kubectl get pods | grep cosbench-controller | awk '{print $1}'
+  cosbench-latest:
+    worker: *kube_cluster
+    steps:
+      - ShellCommand:
+          name: Clone zenko-cosbench repo
+          command: git clone git@github.com:scality/zenko-cosbench.git
+          workdir: build/eve/workers
+      - ShellCommandWithSecrets:
+          name: Generate cosbench workload
+          command: >-
+            awk -f tmpl.awk
+              -v ak="$ZENKO_ACCESS_KEY"
+              -v sk="$ZENKO_SECRET_KEY"
+              -v ep="http://${ZENKO_HELM_RELEASE}-cloudserver-front"
+              cosbench_workload.xml | tee zenko-cosbench/charts/zenko-cosbench/workload.xml
+          workdir: build/eve/workers
+      - ShellCommand:
+          name: Install cosbench
+          command: >-
+            helm upgrade zenko-cosbench --namespace %(prop:testNamespace)s
+            --install zenko-cosbench/charts/zenko-cosbench
+            --set controller.staticWorkload=true
+            --wait
+      - SetPropertyFromCommand:
+          name: Start cosbench run and grab ID
+          property: cosbench_workload_id
+          command: >-
+            curl "http://cosbench-cosbench-controller:19088/controller/cli/submit.action?username=anonymous&password=cosbench"
+            -F @zenko-cosbench/charts/zenko-cosbench/workload.xml | sed 's/Accepted with ID: \(.*\)/\\1/'
+          workdir: build/eve/workers
+      - ShellCommand:
+          name: Wait for run to finish
+          timeout: 45000 # 12.5 hrs
+          command: |-
+            while [ $(curl "http://cosbench-cosbench-controller:19088/controller/cli/index.action?username=anonymous&password=cosbench 2>&1 | grep PROCESSING | wc -l | xargs -I "X" test 1 -eq X) ]; do
+              sleep 60
+            done
+          haltOnFailure: true
+      - SetPropertyFromCommand:
+        name: Get cosbench pod
+        property: cosbench_pod
+        command: kubectl get pods | grep cosbench-controller | awk '{print $1}'
