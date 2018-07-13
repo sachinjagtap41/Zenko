@@ -260,6 +260,6 @@ stages:
             done
           haltOnFailure: true
       - SetPropertyFromCommand:
-        name: Get cosbench pod
-        property: cosbench_pod
-        command: kubectl get pods | grep cosbench-controller | awk '{print $1}'
+          name: Get cosbench pod
+          property: cosbench_pod
+          command: kubectl get pods | grep cosbench-controller | awk '{print $1}'
