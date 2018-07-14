@@ -281,7 +281,7 @@ stages:
               -v ep="http://${ZENKO_HELM_RELEASE}-cloudserver-front"
               cosbench_workload.xml | tee zenko-cosbench/charts/zenko-cosbench/workload.xml
           workdir: build/eve/workers
-      - ShellCommand:
+      - ShellCommandWithSecrets:
           name: Install cosbench
           command: >-
             helm upgrade zenko-cosbench --namespace %(prop:testNamespace)s
