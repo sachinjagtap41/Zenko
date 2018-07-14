@@ -225,7 +225,7 @@ stages:
   cosbench-latest:
     worker: *kube_cluster
     steps:
-      - ShellCommand: &install_tiller
+      - ShellCommand: *install_tiller
       - Git: *git_pull
       - ShellCommand: *install_tiller
       - ShellCommand: *helm_repos
