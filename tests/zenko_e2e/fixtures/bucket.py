@@ -326,7 +326,8 @@ def wasabi_crr_pr_target_bucket(wasabi_resource):
 
 @pytest.fixture(scope='session')
 def digital_crr_pr_ocean_bucket(digital_ocean_resource):
-    bucket = create_bucket(digital_ocean_resource, conf.DO_CRR_PR_TARGET_BUCKET)
+    bucket = create_bucket(
+        digital_ocean_resource, conf.DO_CRR_PR_TARGET_BUCKET)
     yield bucket
     util.cleanup_bucket(bucket, delete_bucket=False)
 

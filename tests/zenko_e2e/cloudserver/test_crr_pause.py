@@ -31,8 +31,8 @@ def test_aws_1_1_pr(
         Body=testfile,
         Key=objkey + '2'
     )
-    assert util.check_object_dne(objkey + '2', aws_crr_pr_bucket,
-                                 aws_crr_pr_target_bucket, timeout=30)
+    assert util.check_object_dne(aws_crr_pr_bucket,
+                                 aws_crr_pr_target_bucket)
     resume_url = conf.ZENKO_ENDPOINT + '/_/backbeat/api/crr/resume'
     requests.post(resume_url)
     assert util.check_object(objkey + '2', testfile, aws_crr_pr_bucket,
@@ -57,8 +57,8 @@ def test_gcp_1_1_pr(
         Body=testfile,
         Key=objkey + '2'
     )
-    assert util.check_object_dne(objkey + '2', gcp_crr_pr_bucket,
-                                 gcp_crr_pr_target_bucket, timeout=30)
+    assert util.check_object_dne(gcp_crr_pr_bucket,
+                                 gcp_crr_pr_target_bucket)
     resume_url = conf.ZENKO_ENDPOINT + '/_/backbeat/api/crr/resume'
     requests.post(resume_url)
     assert util.check_object(objkey + '2', testfile, gcp_crr_pr_bucket,
@@ -83,8 +83,8 @@ def test_azure_1_1_pr(
         Body=testfile,
         Key=objkey + '2'
     )
-    assert util.check_object_dne(objkey + '2', azure_crr_pr_bucket,
-                                 azure_crr_pr_target_bucket, timeout=30)
+    assert util.check_object_dne(azure_crr_pr_bucket,
+                                 azure_crr_pr_target_bucket)
     resume_url = conf.ZENKO_ENDPOINT + '/_/backbeat/api/crr/resume'
     requests.post(resume_url)
     assert util.check_object(objkey + '2', testfile, azure_crr_pr_bucket,
@@ -109,8 +109,8 @@ def test_wasabi_1_1_pr(
         Body=testfile,
         Key=objkey + '2'
     )
-    assert util.check_object_dne(objkey + '2', wasabi_crr_pr_bucket,
-                                 wasabi_crr_pr_target_bucket, timeout=30)
+    assert util.check_object_dne(wasabi_crr_pr_bucket,
+                                 wasabi_crr_pr_target_bucket)
     resume_url = conf.ZENKO_ENDPOINT + '/_/backbeat/api/crr/resume'
     requests.post(resume_url)
     assert util.check_object(objkey + '2', testfile, wasabi_crr_pr_bucket,
@@ -128,8 +128,10 @@ def test_multi_1_M_pr(  # pylint: disable=invalid-name, too-many-arguments
         Key=objkey + '1'
     )
     assert util.check_object(objkey + '1', testfile, multi_crr_pr_bucket,
-                             aws_crr_pr_target_bucket, gcp_crr_pr_target_bucket,
-                             azure_crr_pr_target_bucket, wasabi_crr_pr_target_bucket,
+                             aws_crr_pr_target_bucket,
+                             gcp_crr_pr_target_bucket,
+                             azure_crr_pr_target_bucket,
+                             wasabi_crr_pr_target_bucket,
                              timeout=30)
     pause_url = conf.ZENKO_ENDPOINT + '/_/backbeat/api/crr/pause'
     requests.post(pause_url)
@@ -138,13 +140,16 @@ def test_multi_1_M_pr(  # pylint: disable=invalid-name, too-many-arguments
         Body=testfile,
         Key=objkey + '2'
     )
-    assert util.check_object_dne(objkey + '2', multi_crr_pr_bucket,
-                                 aws_crr_pr_target_bucket, gcp_crr_pr_target_bucket,
+    assert util.check_object_dne(multi_crr_pr_bucket,
+                                 aws_crr_pr_target_bucket,
+                                 gcp_crr_pr_target_bucket,
                                  azure_crr_pr_target_bucket,
-                                 wasabi_crr_pr_target_bucket, timeout=30)
+                                 wasabi_crr_pr_target_bucket)
     resume_url = conf.ZENKO_ENDPOINT + '/_/backbeat/api/crr/resume'
     requests.post(resume_url)
     assert util.check_object(objkey + '2', testfile, multi_crr_pr_bucket,
-                             aws_crr_pr_target_bucket, gcp_crr_pr_target_bucket,
-                             azure_crr_pr_target_bucket, wasabi_crr_pr_target_bucket,
+                             aws_crr_pr_target_bucket,
+                             gcp_crr_pr_target_bucket,
+                             azure_crr_pr_target_bucket,
+                             wasabi_crr_pr_target_bucket,
                              timeout=30)
