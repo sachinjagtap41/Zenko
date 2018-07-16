@@ -297,7 +297,7 @@ stages:
           workdir: build/eve/workers
       - ShellCommand:
           name: Wait for run to finish
-          timeout: 45000 # 12.5 hrs
+          maxTime: 45000 # 12.5 hrs
           command: |-
             while [ $(curl "http://cosbench-cosbench-controller:19088/controller/cli/index.action?username=anonymous&password=cosbench 2>&1 | grep PROCESSING | wc -l | xargs -I "X" test 1 -eq X) ]; do
               sleep 60
@@ -307,3 +307,13 @@ stages:
           name: Get cosbench pod
           property: cosbench_pod
           command: kubectl get pods | grep cosbench-controller | awk '{print $1}'
+      - ShellCommand:
+          name: Retrieve run results
+          command: |-
+            mkdir cosbench
+            kubectl cp %(prop:testNamespace)s/%(prop:cosbench_pod)s/:archive/%(prop:cosbench_workload_id)s-workload1/ ./cosbench/
+          workdir: build/tests
+      - Upload:
+          source: tests/cosbench
+          urls:
+            - "*"
