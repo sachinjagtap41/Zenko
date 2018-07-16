@@ -243,6 +243,94 @@ def muti_crr_bucket(zenko_resource):
     util.cleanup_bucket(bucket, delete_bucket=False)
 
 
+# These are buckets in zenko with replication enabled for pause/resume testing
+
+
+@pytest.fixture(scope='function')
+def aws_crr_pr_bucket(zenko_resource):
+    bucket = create_bucket(zenko_resource, conf.AWS_CRR_PR_SRC_BUCKET)
+    util.bucket_safe_create(bucket)
+    yield bucket
+    util.cleanup_bucket(bucket, delete_bucket=False)
+
+
+@pytest.fixture(scope='function')
+def gcp_crr_pr_bucket(zenko_resource):
+    bucket = create_bucket(zenko_resource, conf.GCP_CRR_PR_SRC_BUCKET)
+    util.bucket_safe_create(bucket)
+    yield bucket
+    util.cleanup_bucket(bucket, delete_bucket=False)
+
+
+@pytest.fixture(scope='function')
+def azure_crr_pr_bucket(zenko_resource):
+    bucket = create_bucket(zenko_resource, conf.AZURE_CRR_PR_SRC_BUCKET)
+    util.bucket_safe_create(bucket)
+    yield bucket
+    util.cleanup_bucket(bucket, delete_bucket=False)
+
+
+@pytest.fixture(scope='function')
+def wasabi_crr_pr_bucket(zenko_resource):
+    bucket = create_bucket(zenko_resource, conf.WASABI_CRR_PR_SRC_BUCKET)
+    util.bucket_safe_create(bucket)
+    yield bucket
+    util.cleanup_bucket(bucket, delete_bucket=False)
+
+
+@pytest.fixture(scope='function')
+def digital_ocean_crr_pr_bucket(zenko_resource):
+    bucket = create_bucket(zenko_resource, conf.DO_CRR_PR_SRC_BUCKET)
+    util.bucket_safe_create(bucket)
+    yield bucket
+    util.cleanup_bucket(bucket, delete_bucket=False)
+
+
+@pytest.fixture(scope='function')
+def muti_crr_pr_bucket(zenko_resource):
+    bucket = create_bucket(zenko_resource, conf.MULTI_CRR_PR_SRC_BUCKET)
+    util.bucket_safe_create(bucket)
+    yield bucket
+    util.cleanup_bucket(bucket, delete_bucket=False)
+
+# These are buckets from the actual cloud backend for pause/resume testing
+
+
+@pytest.fixture(scope='session')
+def aws_crr_pr_target_bucket(aws_crr_resource):
+    bucket = create_bucket(aws_crr_resource, conf.AWS_CRR_PR_TARGET_BUCKET)
+    yield bucket
+    util.cleanup_bucket(bucket, delete_bucket=False)
+
+
+@pytest.fixture(scope='session')
+def gcp_crr_pr_target_bucket(gcp_resource):
+    bucket = create_bucket(gcp_resource, conf.GCP_CRR_PR_TARGET_BUCKET)
+    yield bucket
+    util.cleanup_bucket(bucket, delete_bucket=False)
+
+
+@pytest.fixture(scope='session')
+def azure_crr_pr_target_bucket(azure_resource):
+    bucket = create_bucket(azure_resource, conf.AZURE_CRR_PR_TARGET_BUCKET)
+    yield bucket
+    util.cleanup_azure_bucket(bucket, delete_bucket=False)
+
+
+@pytest.fixture(scope='session')
+def wasabi_crr_pr_target_bucket(wasabi_resource):
+    bucket = create_bucket(wasabi_resource, conf.WASABI_CRR_PR_TARGET_BUCKET)
+    yield bucket
+    util.cleanup_bucket(bucket, delete_bucket=False)
+
+
+@pytest.fixture(scope='session')
+def digital_crr_pr_ocean_bucket(digital_ocean_resource):
+    bucket = create_bucket(digital_ocean_resource, conf.DO_CRR_PR_TARGET_BUCKET)
+    yield bucket
+    util.cleanup_bucket(bucket, delete_bucket=False)
+
+
 @pytest.fixture(scope='function')
 def encrypted_bucket(aws_endpoint_resource):
     auth = S3Auth(conf.ZENKO_ACCESS_KEY, conf.ZENKO_SECRET_KEY,

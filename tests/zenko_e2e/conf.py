@@ -127,6 +127,33 @@ DO_CRR_SRC_BUCKET = get_env('DO_CRR_SRC_BUCKET', 'zenko-do-crr-src-bucket')
 MULTI_CRR_SRC_BUCKET = get_env(
     'MULTI_CRR_SRC_BUCKET', 'zenko-multi-crr-src-bucket')
 
+# The target buckets configured for CR Pause Resume
+AWS_CRR_PR_TARGET_BUCKET = get_env(
+    'AWS_S3_BACKBEAT_PR_BUCKET_NAME', 'zenko-aws-crr-target-bucket')
+GCP_CRR_PR_TARGET_BUCKET = get_env(
+    'GCP_CRR_PR_BUCKET_NAME', 'zenko-gcp-crr-pr-target-bucket')
+AZURE_CRR_PR_TARGET_BUCKET = get_env(
+    'AZURE_BACKBEAT_PR_CONTAINER_NAME', 'zenko-azure-crr-pr-target-bucket')
+WASABI_CRR_PR_TARGET_BUCKET = get_env(
+    'WASABI_CRR_PR_TARGET_BUCKET', 'zenko-wasabi-crr-pr-target-bucket')
+DO_CRR_PR_TARGET_BUCKET = get_env(
+    'DO_CRR_PR_TARGET_BUCKET', 'zenko-do-crr-pr-target-bucket')
+MULTI_CRR_PR_TARGET_BUCKET = get_env(
+    'MULTI_CRR_PR_TARGET_BUCKET', 'zenko-multi-crr-pr-target-bucket')
+
+AWS_CRR_PR_SRC_BUCKET = get_env(
+    'AWS_S3_BACKBEAT_PR_SRC_BUCKET_NAME', 'zenko-aws-crr-pr-src-bucket')
+GCP_CRR_PR_SRC_BUCKET = get_env(
+    'GCP_CRR_PR_SRC_BUCKET_NAME', 'zenko-gcp-crr-pr-src-bucket')
+AZURE_CRR_PR_SRC_BUCKET = get_env(
+    'AZURE_BACKBEAT_PR_SRC_CONTAINER_NAME', 'zenko-azure-crr-pr-src-bucket')
+WASABI_CRR_PR_SRC_BUCKET = get_env(
+    'WASABI_CRR_PR_SRC_BUCKET', 'zenko-wasabi-crr-pr-src-bucket')
+DO_CRR_PR_SRC_BUCKET = get_env(
+    'DO_CRR_PR_SRC_BUCKET', 'zenko-do-crr-pr-src-bucket')
+MULTI_CRR_PR_SRC_BUCKET = get_env(
+    'MULTI_CRR_PR_SRC_BUCKET', 'zenko-multi-crr-pr-src-bucket')
+
 ZENKO_REPL_BUCKETS = [
     AWS_CRR_SRC_BUCKET,
     GCP_CRR_SRC_BUCKET,
