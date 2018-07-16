@@ -300,7 +300,7 @@ stages:
           workdir: build/eve/workers
       - ShellCommand:
           name: Wait for run to finish
-          maxTime: 45000 # 12.5 hrs
+          maxTime: 14400 # 12.5 hrs
           command: |-
             while [ $(curl "http://cosbench-cosbench-controller:19088/controller/cli/index.action?username=anonymous&password=cosbench 2>&1 | grep PROCESSING | wc -l | xargs -I "X" test 1 -eq X) ]; do
               sleep 60
