@@ -225,7 +225,6 @@ stages:
   cosbench-latest:
     worker: *kube_cluster
     steps:
-      - ShellCommand: *install_tiller
       - Git: *git_pull
       - ShellCommand: *install_tiller
       - ShellCommand: *helm_repos
@@ -288,6 +287,8 @@ stages:
             --install zenko-cosbench/charts/zenko-cosbench
             --set controller.staticWorkload=true
             --wait
+          env:
+            <<: *global_env
       - SetPropertyFromCommand:
           name: Start cosbench run and grab ID
           property: cosbench_workload_id
