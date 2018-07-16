@@ -289,6 +289,7 @@ stages:
             --wait
           env:
             <<: *global_env
+          workdir: build/eve/workers
       - SetPropertyFromCommand:
           name: Start cosbench run and grab ID
           property: cosbench_workload_id
