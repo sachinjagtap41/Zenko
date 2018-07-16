@@ -80,23 +80,23 @@ def check_object(key, data, local, *args, timeout=0, backoff=5):
 
 
 def check_object_dne(key, local, *args, timeout=0, backoff=5):
-    passed = False
-    try:
-        _log.info('about to call get_object_hash in check_object_dne')
-        get_object_hash(local, key, timeout, backoff)
-    except Exception as exp:  # pylint: disable=broad-except
-        _log.info('exception is %s', exp)
-        passed = True
-    for bucket in args:
-        remotekey = '%s/%s' % (local.name,
-                key) if not conf.BUCKET_MATCH and local is not bucket else key  # noqa pylint: disable=bad-continuation
-        remote_hash = get_object_hash(bucket, remotekey, timeout, backoff)
-        if remote_hash is not None:
-            passed = False
-            _log.error('%s/%s should not exist on cloud backend',
-                       bucket.name, remotekey)
-        return passed
-
+    # passed = False
+    # try:
+    #     _log.info('about to call get_object_hash in check_object_dne')
+    #     get_object_hash(local, key, timeout, backoff)
+    # except Exception as exp:  # pylint: disable=broad-except
+    #     _log.info('exception is %s', exp)
+    #     passed = True
+    # for bucket in args:
+    #     remotekey = '%s/%s' % (local.name,
+    #             key) if not conf.BUCKET_MATCH and local is not bucket else key  # noqa pylint: disable=bad-continuation
+    #     remote_hash = get_object_hash(bucket, remotekey, timeout, backoff)
+    #     if remote_hash is not None:
+    #         passed = False
+    #         _log.error('%s/%s should not exist on cloud backend',
+    #                    bucket.name, remotekey)
+    #     return passed
+    pass
 
 def cleanup_bucket(bucket, replicated=False, delete_bucket=True): # noqa pylint: disable=too-many-locals
     if replicated:
