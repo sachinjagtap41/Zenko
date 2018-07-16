@@ -19,10 +19,37 @@ spec:
         {{- if .Values.proxy.https }}
         checksum/config: {{ include (print $.Template.BasePath "/certificate.yaml") . | sha256sum }}
         {{- end }}
+        {{- if not .Values.global.orbit.enabled }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/accounts.yaml") . | sha256sum }}
+        {{- end }}
       labels:
         app: {{ template "cloudserver-front.name" . }}
         release: {{ .Release.Name }}
     spec:
+      {{- if not .Values.global.orbit.enabled }}
+      initContainers:
+        - name: cloudserver-accounts
+          image: "zenko/tools:latest"
+          command:
+            - "sh"
+          args:
+            - "-c"
+            - |
+              set -e
+              set -x
+              jq -s '.[0] * .[1]' /user-credentials/credentials.json /service-credentials/credentials.json > /data/credentials.json
+              jq -s '. as [$ACCS, $KEYS] | $ACCS.accounts | map(.keys[0]={ access: $KEYS[.name].access, secret: $KEYS[.name].secret} ) | { accounts: . }' /accounts/authdata.json /data/credentials.json > /data/authdata.json
+          volumeMounts:
+            - name: accounts
+              mountPath: /accounts
+            - name: service-credentials
+              mountPath: /service-credentials
+            - name: user-credentials
+              mountPath: /user-credentials
+            - name: auth-config
+              mountPath: /data
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -51,11 +78,7 @@ spec:
               value: "{{ .Release.Name }}-cloudserver-front,{{ .Values.endpoint }}"
             - name: HEALTHCHECKS_ALLOWFROM
               value: "{{ .Values.allowHealthchecksFrom }}"
-{{- if .Values.storageLimit.enabled }}
-            - name: STORAGE_LIMIT_ENABLED
-              value: "true"
-{{- end }}
-{{- if .Values.proxy.http }}
+            {{- if .Values.proxy.http }}
             - name: http_proxy
               value: "{{ .Values.proxy.http }}"
             - name: HTTP_PROXY
@@ -64,47 +87,51 @@ spec:
               value: "{{- if .Values.proxy.https }}{{ .Values.proxy.https }}{{- else }}{{ .Values.proxy.http }}{{- end }}"
             - name: HTTPS_PROXY
               value: "{{- if .Values.proxy.https }}{{ .Values.proxy.https }}{{- else }}{{ .Values.proxy.http }}{{- end }}"
-{{- else if .Values.proxy.https }}
+            {{- else if .Values.proxy.https }}
             - name: https_proxy
               value: "{{ .Values.proxy.https }}"
             - name: HTTPS_PROXY
               value: "{{ .Values.proxy.https }}"
-{{- end }}
-{{- if .Values.proxy.caCert }}
+            {{- end }}
+            {{- if .Values.proxy.caCert }}
             - name: NODE_EXTRA_CA_CERTS
               value: "/ssl/ca.crt"
-{{- end }}
-{{- if .Values.mongodb.enabled }}
+            {{- end }}
+            {{- if .Values.mongodb.enabled }}
             - name: S3METADATA
               value: "mongodb"
             - name: MONGODB_HOSTS
               value: "{{ template "cloudserver-front.mongodb-hosts" . }}"
             - name: MONGODB_RS
               value: "{{ default "rs0" .Values.mongodb.replicaSet }}"
-{{- end}}
-{{- if .Values.orbit.enabled }}
+            {{- end}}
+            {{- if .Values.global.orbit.enabled }}
+            {{- if .Values.global.orbit.storageLimit.enabled }}
+            - name: STORAGE_LIMIT_ENABLED
+              value: "true"
+            {{- end }}
             - name: REMOTE_MANAGEMENT_DISABLE
               value: "0"
             - name: MANAGEMENT_ENDPOINT
-              value: "{{- .Values.orbit.endpoint -}}"
+              value: "{{- .Values.global.orbit.endpoint -}}"
             - name: MANAGEMENT_MODE
-              value: "{{- .Values.orbit.mode -}}"
+              value: "{{- .Values.global.orbit.mode -}}"
             - name: PUSH_ENDPOINT
-              value: "{{- .Values.orbit.pushEndpoint -}}"
-{{- else }}
+              value: "{{- .Values.global.orbit.pushEndpoint -}}"
+            {{- else }}
+            - name: S3AUTH_CONFIG
+              value: "/data/authdata.json"
             - name: REMOTE_MANAGEMENT_DISABLE
               value: "1"
-            - name: SCALITY_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "cloudserver-front.fullname" . }}
-                  key: keyId
-            - name: SCALITY_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "cloudserver-front.fullname" . }}
-                  key: secretKey
-{{- end }}
+            {{- if .Values.global.locationConstraints }}
+            - name: S3_LOCATION_FILE
+              value: "/etc/config/locationConfig"
+            {{- if .Values.global.replicationEndpoints }}
+            - name: S3_REPLICATION_FILE
+              value: "/etc/config/replicationInfo"
+            {{- end }}
+            {{- end }}
+            {{- end }}
           args: ['npm', 'run', 'start_s3server']
           livenessProbe:
             httpGet:
@@ -116,6 +143,12 @@ spec:
               mountPath: "/ssl"
               readOnly: true
             {{- end }}
+            {{- if .Values.global.locationConstraints }}
+            - name: location-config
+              mountPath: /etc/config
+            - name: auth-config
+              mountPath: /data
+            {{- end}}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- with .Values.nodeSelector }}
@@ -135,4 +168,22 @@ spec:
         - name: proxy-cert
           secret:
             secretName: {{ template "cloudserver-front.fullname" . }}-proxy
+        {{- end }}
+        {{- if not .Values.global.orbit.enabled }}
+        {{- if .Values.global.locationConstraints }}
+        - name: location-config
+          configMap:
+            name: {{ template "cloudserver-front.fullname" . }}-configmap
+        {{- end }}
+        - name: auth-config
+          emptyDir: {}
+        - name: accounts
+          configMap:
+            name: {{ template "cloudserver-front.fullname" . }}-accounts
+        - name: service-credentials
+          secret:
+            secretName: {{ .Release.Name }}-service-secrets
+        - name: user-credentials
+          secret:
+            secretName: {{ template "cloudserver-front.fullname" . }}-user-secrets
         {{- end }}

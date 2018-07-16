@@ -23,7 +23,7 @@ spec:
           args: ["npm", "run", "garbage_collector"]
           env:
             - name: REMOTE_MANAGEMENT_DISABLE
-              value: "{{- if .Values.orbit.enabled }}0{{- else }}1{{- end }}"
+              value: "{{- if .Values.global.orbit.enabled }}0{{- else }}1{{- end }}"
             - name: KAFKA_HOSTS
               value: "{{- printf "%s-zenko-queue:9092" .Release.Name | trunc 63 | trimSuffix "-" -}}"
             - name: EXTENSIONS_GC_AUTH_TYPE
