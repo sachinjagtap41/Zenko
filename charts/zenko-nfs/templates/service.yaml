@@ -10,12 +10,30 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
+    - name: sunrpc
+      port: 111
     - name: nfs
       port: 2049
-    - name: rpcbind
+    - name: rquotad
+      port: {{ .Values.service.extra.rquotad }}
+    - name: mountd
+      port: {{ .Values.service.extra.mountd }}
+    - name: nlm
+      port: {{ .Values.service.extra.nlm }}
+    - name: sunrpc-udp
       port: 111
-    - name: rpcbind-udp
-      port: 111
+      protocol: UDP
+    - name: nfs-udp
+      port: 2049
+      protocol: UDP
+    - name: rquotad-udp
+      port: {{ .Values.service.extra.rquotad }}
+      protocol: UDP
+    - name: mountd-udp
+      port: {{ .Values.service.extra.mountd }}
+      protocol: UDP
+    - name: nlm-udp
+      port: {{ .Values.service.extra.nlm }}
       protocol: UDP
   selector:
     app: {{ template "zenko-nfs.name" . }}

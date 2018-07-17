@@ -5,6 +5,10 @@ replicaCount: 1
 
 service:
   type: NodePort
+  extra:
+    rquotad: 875
+    mountd: 876
+    nlm: 877
 
 nfsd:
   name: "zenko-nfsd"

@@ -28,6 +28,12 @@ spec:
           ports:
             - name: nfs
               containerPort: 2049
+            - name: mountd
+              containerPort: {{ .Values.service.extra.mountd }}
+            - name: rquotad
+              containerPort: {{ .Values.service.extra.rquotad }}
+            - name: nlm
+              containerPort: {{ .Values.service.extra.nlm }}
           volumeMounts:
             - name: portmap-data
               mountPath: /run
@@ -50,6 +56,12 @@ spec:
               value: "mymaster"
             - name: NFSD_LOG_FILE
               value: "/logs/scality-nfsd.log"
+            - name: SERVICE_PORT_MOUNTD
+              value: "{{ .Values.service.extra.mountd }}"
+            - name: SERVICE_PORT_RQUOTAD
+              value: "{{ .Values.service.extra.rquotad }}"
+            - name: SERVICE_PORT_NLM
+              value: "{{ .Values.service.extra.nlm }}"
           args: ['scality.nfsd', '-N', 'INFO', '-F', '-f', '/conf/scality-nfsd.conf', '-L', '/dev/stdout']
           # TODO: livenessProbe:
           # TODO: readinessProbe:
@@ -89,9 +101,9 @@ spec:
           image: "{{ .Values.portmap.image.repository }}:{{ .Values.portmap.image.tag }}"
           imagePullPolicy: {{ .Values.portmap.image.pullPolicy }}
           ports:
-            - name: rpcbind
+            - name: sunrpc
               containerPort: 111
-            - name: rpcbind-udp
+            - name: sunrpc-udp
               containerPort: 111
               protocol: UDP
           volumeMounts:
