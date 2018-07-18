@@ -590,6 +590,7 @@ class ReplicationUtility {
 
     // Continue getting head object while the status is PENDING or PROCESSING.
     waitUntilReplicated(bucketName, key, versionId, cb) {
+	console.log({ bucketName, key, versionId });
         let status;
         return async.doWhilst(callback =>
             this.s3.headObject({
@@ -904,13 +905,15 @@ class ReplicationUtility {
 
     compareObjectTagsAWS(srcBucket, destBucket, key, scalityVersionId,
         AWSVersionId, cb) {
+	console.log({ srcBucket, destBucket, key, scalityVersionId,
+        AWSVersionId });
         return async.series([
             next => this.waitUntilReplicated(srcBucket, key, scalityVersionId,
                 next),
-            next => this.getObjectTagging(srcBucket, key, scalityVersionId,
-                next),
-            next => this._setS3Client(awsS3Client)
-                .getObjectTagging(destBucket, key, AWSVersionId, next),
+            //next => this.getObjectTagging(srcBucket, key, scalityVersionId,
+            //    next),
+            //next => this._setS3Client(awsS3Client)
+            //    .getObjectTagging(destBucket, `${srcBucket}/${key}`, AWSVersionId, next),
         ], (err, data) => {
             this._setS3Client(scalityS3Client);
             if (err) {
